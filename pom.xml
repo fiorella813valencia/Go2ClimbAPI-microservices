@@ -1,0 +1,74 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>dev.orne</groupId>
+    <artifactId>root-pom</artifactId>
+    <version>0.5.4</version>
+    <relativePath />
+  </parent>
+
+  <groupId>org.Go2ClimbAPI-microservices</groupId>
+  <artifactId>Go2ClimbAPI-microservices</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>Go2ClimbAPI-microservices</name>
+  <description>Go2ClimbAPI-microservices</description>
+  <inceptionYear>2021</inceptionYear>
+  <modules>
+    <module>businessdomain</module>
+    <module>Infrastructuredomain</module>
+  </modules>
+  <url>https://orne-dev.github.io/Go2ClimbAPI-microservices/</url>
+
+  <licenses>
+    <license>
+      <name>GNU Lesser General Public License (LGPL) version 3.0</name>
+      <url>https://www.gnu.org/licenses/lgpl-3.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+  </developers>
+
+  <properties>
+    <license.licenseName>lgpl_v3</license.licenseName>
+
+    <sonar.projectKey>orne-dev_Go2ClimbAPI-microservices</sonar.projectKey>
+
+    <install.skip>false</install.skip>
+    <deploy.skip>false</deploy.skip>
+  </properties>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <configuration>
+            <topSiteURL>https://orne-dev.github.io/Go2ClimbAPI-microservices/</topSiteURL>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <scm>
+    <connection>scm:git:https://github.com/orne-dev/Go2ClimbAPI-microservices.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com:orne-dev/Go2ClimbAPI-microservices.git</developerConnection>
+    <url>https://github.com/orne-dev/Go2ClimbAPI-microservices/</url>
+  </scm>
+  <distributionManagement>
+    <site>
+      <id>github</id>
+      <name>Github Project Pages</name>
+      <url>https://orne-dev.github.io/maven-root/archetype/pom-project/</url>
+    </site>
+  </distributionManagement>
+
+</project>
