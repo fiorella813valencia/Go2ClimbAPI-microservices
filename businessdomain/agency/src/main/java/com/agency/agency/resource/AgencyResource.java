@@ -1,6 +1,9 @@
 package com.agency.agency.resource;
 
+import com.agency.agency.domain.model.entity.AgencyServices;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,4 +21,5 @@ public class AgencyResource {
     private int ruc;
     private String photo;
     private int score;
+    private List<AgencyServices> services;
 }

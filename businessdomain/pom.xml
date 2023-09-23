@@ -16,6 +16,7 @@
 
     <modules>
         <module>agency</module>
+        <module>service</module>
     </modules>
     <name>businessdomain</name>
     <description>businessdomain</description>

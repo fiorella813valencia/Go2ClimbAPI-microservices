@@ -5,10 +5,21 @@ import com.agency.agency.mapping.AgencyMapper;
 import com.agency.agency.resource.AgencyResource;
 import com.agency.agency.resource.CreateAgencyResource;
 import com.agency.agency.resource.UpdateAgencyResource;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.epoll.EpollChannelOption;
+import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.WriteTimeoutHandler;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import reactor.netty.http.client.HttpClient;
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
+
 
 @CrossOrigin("*")
 @RestController
@@ -17,9 +28,29 @@ public class AgencyController {
     private final AgencyService agencyService;
     private final AgencyMapper mapper;
 
-    public AgencyController(AgencyService agencyService, AgencyMapper mapper) {
+    private final WebClient.Builder webClientBuilder;
+
+
+    //webClient requires HttpClient library to work propertly
+    HttpClient client = HttpClient.create()
+            //Connection Timeout: is a period within which a connection between a client and a server must be established
+            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
+            .option(ChannelOption.SO_KEEPALIVE, true)
+            .option(EpollChannelOption.TCP_KEEPIDLE, 300)
+            .option(EpollChannelOption.TCP_KEEPINTVL, 60)
+            //Response Timeout: The maximun time we wait to receive a response after sending a request
+            .responseTimeout(Duration.ofSeconds(1))
+            // Read and Write Timeout: A read timeout occurs when no data was read within a certain
+            //period of time, while the write timeout when a write operation cannot finish at a specific time
+            .doOnConnected(connection -> {
+                connection.addHandlerLast(new ReadTimeoutHandler(5000, TimeUnit.MILLISECONDS));
+                connection.addHandlerLast(new WriteTimeoutHandler(5000, TimeUnit.MILLISECONDS));
+            });
+
+    public AgencyController(AgencyService agencyService, AgencyMapper mapper, WebClient.Builder webClientBuilder) {
         this.agencyService = agencyService;
         this.mapper = mapper;
+        this.webClientBuilder = webClientBuilder;
     }
 
     //funciona GET ALL
@@ -62,6 +93,7 @@ public class AgencyController {
 
 
     //funciona POST
+    @Transactional
     @PostMapping
     public AgencyResource createAgency(@RequestBody CreateAgencyResource resource){
         return mapper.toResource(agencyService.create(mapper.toModel(resource)));

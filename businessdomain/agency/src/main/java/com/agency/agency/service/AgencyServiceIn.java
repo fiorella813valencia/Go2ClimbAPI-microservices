@@ -2,6 +2,7 @@ package com.agency.agency.service;
 
 
 import com.agency.agency.domain.model.entity.Agency;
+import com.agency.agency.domain.model.entity.AgencyServices;
 import com.agency.agency.domain.persistence.AgencyRepository;
 import com.agency.agency.domain.service.AgencyService;
 import com.agency.agency.shared.exception.ResourceNotFoundException;
@@ -83,6 +84,14 @@ public class AgencyServiceIn implements AgencyService {
         if (agencyWithPhoneNumber != null)
             throw new ResourceValidationException(ENTITY,
                     "An agency with the same phone number already exists.");
+
+        // Asociar AgencyService con Agency
+        List<AgencyServices> services = agency.getServices();
+        if (services != null) {
+            for (AgencyServices service : services) {
+                service.setAgency(agency);
+            }
+        }
 
         return agencyRepository.save(agency);
     }
