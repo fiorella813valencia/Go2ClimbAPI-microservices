@@ -174,16 +174,16 @@ public class AgencyServiceIn implements AgencyService {
         Agency agency =agencyRepository.findByName(name);
         List<AgencyServices> services = agency.getServices();
         services.forEach(x->{
-            String serviceName=getServiceName(x.getId());
-            String serviceDescription=getServiceDescription(x.getId());
-            String serviceLocation=getServiceLocation(x.getId());
-            Integer serviceScore=getServiceScore(x.getId());
-            Integer serviceNewPrice=getServiceNewPrice(x.getId());
-            Integer servicePrice=getServicePrice(x.getId());
-            String serviceCreationDate=getServiceCreationDate(x.getId());
-            String servicePhotos=getServicePhotos(x.getId());
-            Integer serviceIsOffer=getServiceIsOffer(x.getId());
-            Integer serviceIsPopular=getServiceIsPopular(x.getId());
+            String serviceName=getServiceName(x.getServiceId());
+            String serviceDescription=getServiceDescription(x.getServiceId());
+            String serviceLocation=getServiceLocation(x.getServiceId());
+            Integer serviceScore=getServiceScore(x.getServiceId());
+            Integer serviceNewPrice=getServiceNewPrice(x.getServiceId());
+            Integer servicePrice=getServicePrice(x.getServiceId());
+            String serviceCreationDate=getServiceCreationDate(x.getServiceId());
+            String servicePhotos=getServicePhotos(x.getServiceId());
+            Integer serviceIsOffer=getServiceIsOffer(x.getServiceId());
+            Integer serviceIsPopular=getServiceIsPopular(x.getServiceId());
 
             x.setServiceName(serviceName);
             x.setDescription(serviceDescription);

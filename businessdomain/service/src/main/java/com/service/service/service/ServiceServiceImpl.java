@@ -42,8 +42,7 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Override
     public Service getServiceByServiceId(Long serviceId) {
-        return serviceRepository.findById(serviceId).orElseThrow(() ->
-                new ResourceNotFoundException(ENTITY, serviceId));
+        return serviceRepository.findByServiceId(serviceId);
     }
 
 

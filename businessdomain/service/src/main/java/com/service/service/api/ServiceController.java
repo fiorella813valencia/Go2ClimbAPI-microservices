@@ -84,7 +84,7 @@ public class ServiceController {
     })
     @GetMapping("{serviceId}")
     public ServiceResource getById (@PathVariable Long serviceId) {
-        return mapper.toResource(serviceService.getServiceById(serviceId));
+        return mapper.toResource(serviceService.getServiceByServiceId(serviceId));
     }
 
 
