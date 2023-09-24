@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Go2ClimbAPI-microservices.iml" filepath="$PROJECT_DIR$/Go2ClimbAPI-microservices.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Infrastructuredomain/Infrastructuredomain.iml" filepath="$PROJECT_DIR$/Infrastructuredomain/Infrastructuredomain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/businessdomain/agency/agency.iml" filepath="$PROJECT_DIR$/businessdomain/agency/agency.iml" />
+      <module fileurl="file://$PROJECT_DIR$/businessdomain/businessdomain.iml" filepath="$PROJECT_DIR$/businessdomain/businessdomain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/businessdomain/service/service.iml" filepath="$PROJECT_DIR$/businessdomain/service/service.iml" />
+    </modules>
+  </component>
+</project>
