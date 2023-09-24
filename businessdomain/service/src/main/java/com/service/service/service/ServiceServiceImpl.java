@@ -92,6 +92,7 @@ public class ServiceServiceImpl implements ServiceService {
         return serviceRepository.findById(serviceId).map(existingService ->
                 serviceRepository.save(existingService.withName(service.getName())
                         .withDescription(service.getDescription())
+                        .withServiceId(service.getServiceId())
                         .withLocation(service.getLocation())
                         .withScore(service.getScore())
                         .withPrice(service.getPrice())

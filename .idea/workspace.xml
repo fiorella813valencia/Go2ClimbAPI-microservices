@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d63e7fe1-183f-4332-9c8f-e7e946820663" name="Changes" comment="feat(Service) fix service resource">
+    <list default="true" id="d63e7fe1-183f-4332-9c8f-e7e946820663" name="Changes" comment="feat(Service) fix service implementation">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/businessdomain/agency/src/main/java/com/agency/agency/resource/UpdateAgencyResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/businessdomain/agency/src/main/java/com/agency/agency/resource/UpdateAgencyResource.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/businessdomain/agency/src/main/java/com/agency/agency/service/AgencyServiceIn.java" beforeDir="false" afterPath="$PROJECT_DIR$/businessdomain/agency/src/main/java/com/agency/agency/service/AgencyServiceIn.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/businessdomain/service/src/main/java/com/service/service/api/ServiceController.java" beforeDir="false" afterPath="$PROJECT_DIR$/businessdomain/service/src/main/java/com/service/service/api/ServiceController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/businessdomain/service/src/main/java/com/service/service/service/ServiceServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/businessdomain/service/src/main/java/com/service/service/service/ServiceServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -83,7 +81,7 @@
   <component name="ReactorSettings">
     <option name="notificationShown" value="true" />
   </component>
-  <component name="RunManager" selected="Spring Boot.agency ">
+  <component name="RunManager" selected="Spring Boot.service">
     <configuration default="true" type="JetRunConfigurationType">
       <module name="Go2ClimbAPI-microservices" />
       <method v="2">
@@ -127,7 +125,7 @@
       <workItem from="1695167813940" duration="8035000" />
       <workItem from="1695350847546" duration="6246000" />
       <workItem from="1695476883915" duration="15158000" />
-      <workItem from="1695520698499" duration="10897000" />
+      <workItem from="1695520698499" duration="11900000" />
     </task>
     <task id="LOCAL-00001" summary="first commit init?">
       <created>1695175327541</created>
@@ -164,7 +162,14 @@
       <option name="project" value="LOCAL" />
       <updated>1695533589891</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="feat(Service) fix service implementation">
+      <created>1695535875091</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1695535875091</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -178,6 +183,7 @@
     <MESSAGE value="feat(Service) microservice i dunno if this shit is gonna work" />
     <MESSAGE value="feat(Agency) first microservice implemented is working !!!" />
     <MESSAGE value="feat(Service) fix service resource" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(Service) fix service resource" />
+    <MESSAGE value="feat(Service) fix service implementation" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(Service) fix service implementation" />
   </component>
 </project>
