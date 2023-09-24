@@ -150,6 +150,7 @@ public class AgencyServiceIn implements AgencyService {
                                 .withLocation(request.getLocation())
                                 .withRuc(request.getRuc())
                                 .withPhoto(request.getPhoto())
+                                        .withServices(request.getServices())
                                 .withScore(request.getScore())))
                 .orElseThrow(() -> new ResourceNotFoundException(ENTITY, agencyId));
     }
