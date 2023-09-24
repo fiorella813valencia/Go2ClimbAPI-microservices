@@ -13,7 +13,7 @@ public class CreateServiceResource {
 
     @NotBlank
     private String name;
-
+    private Long serviceId;
     @NotBlank
     private String description;
 

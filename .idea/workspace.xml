@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d63e7fe1-183f-4332-9c8f-e7e946820663" name="Changes" comment="feat(Service) microservice i dunno if this shit is gonna work">
+    <list default="true" id="d63e7fe1-183f-4332-9c8f-e7e946820663" name="Changes" comment="feat(Agency) first microservice implemented is working !!!">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/businessdomain/agency/src/main/java/com/agency/agency/api/AgencyController.java" beforeDir="false" afterPath="$PROJECT_DIR$/businessdomain/agency/src/main/java/com/agency/agency/api/AgencyController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/businessdomain/agency/src/main/java/com/agency/agency/domain/service/AgencyService.java" beforeDir="false" afterPath="$PROJECT_DIR$/businessdomain/agency/src/main/java/com/agency/agency/domain/service/AgencyService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/businessdomain/agency/src/main/java/com/agency/agency/service/AgencyServiceIn.java" beforeDir="false" afterPath="$PROJECT_DIR$/businessdomain/agency/src/main/java/com/agency/agency/service/AgencyServiceIn.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/businessdomain/service/src/main/java/com/service/service/resource/CreateServiceResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/businessdomain/service/src/main/java/com/service/service/resource/CreateServiceResource.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -126,7 +124,7 @@
       <workItem from="1695167813940" duration="8035000" />
       <workItem from="1695350847546" duration="6246000" />
       <workItem from="1695476883915" duration="15158000" />
-      <workItem from="1695520698499" duration="7446000" />
+      <workItem from="1695520698499" duration="8858000" />
     </task>
     <task id="LOCAL-00001" summary="first commit init?">
       <created>1695175327541</created>
@@ -149,7 +147,14 @@
       <option name="project" value="LOCAL" />
       <updated>1695522029577</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="feat(Agency) first microservice implemented is working !!!">
+      <created>1695529877563</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1695529877563</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -161,22 +166,7 @@
     </ignored-roots>
     <MESSAGE value="first commit init?" />
     <MESSAGE value="feat(Service) microservice i dunno if this shit is gonna work" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(Service) microservice i dunno if this shit is gonna work" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/businessdomain/agency/src/main/java/com/agency/agency/service/AgencyServiceIn.java</url>
-          <line>211</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/businessdomain/agency/src/main/java/com/agency/agency/service/AgencyServiceIn.java</url>
-          <line>187</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="feat(Agency) first microservice implemented is working !!!" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(Agency) first microservice implemented is working !!!" />
   </component>
 </project>
