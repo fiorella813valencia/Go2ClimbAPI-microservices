@@ -7,15 +7,38 @@ import com.agency.agency.domain.persistence.AgencyRepository;
 import com.agency.agency.domain.service.AgencyService;
 import com.agency.agency.shared.exception.ResourceNotFoundException;
 import com.agency.agency.shared.exception.ResourceValidationException;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.epoll.EpollChannelOption;
+import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.WriteTimeoutHandler;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.netty.http.client.HttpClient;
+//imports from webflux
+import io.netty.channel.ChannelOption;
+import io.netty.channel.epoll.EpollChannelOption;
+import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.WriteTimeoutHandler;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.netty.http.client.HttpClient;
+import java.time.Duration;
+import java.util.Collections;
+import java.util.concurrent.TimeUnit;
+import java.time.Duration;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class AgencyServiceIn implements AgencyService {
@@ -25,9 +48,29 @@ public class AgencyServiceIn implements AgencyService {
 
     private final Validator validator;
 
-    public AgencyServiceIn(AgencyRepository agencyRepository, Validator validator) {
+    private final WebClient.Builder webClientBuilder;
+
+
+    //webClient requires HttpClient library to work propertly
+    HttpClient client = HttpClient.create()
+            //Connection Timeout: is a period within which a connection between a client and a server must be established
+            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
+            .option(ChannelOption.SO_KEEPALIVE, true)
+            .option(EpollChannelOption.TCP_KEEPIDLE, 300)
+            .option(EpollChannelOption.TCP_KEEPINTVL, 60)
+            //Response Timeout: The maximun time we wait to receive a response after sending a request
+            .responseTimeout(Duration.ofSeconds(1))
+            // Read and Write Timeout: A read timeout occurs when no data was read within a certain
+            //period of time, while the write timeout when a write operation cannot finish at a specific time
+            .doOnConnected(connection -> {
+                connection.addHandlerLast(new ReadTimeoutHandler(5000, TimeUnit.MILLISECONDS));
+                connection.addHandlerLast(new WriteTimeoutHandler(5000, TimeUnit.MILLISECONDS));
+            });
+
+    public AgencyServiceIn(AgencyRepository agencyRepository, Validator validator, WebClient.Builder webClientBuilder) {
         this.agencyRepository = agencyRepository;
         this.validator = validator;
+        this.webClientBuilder = webClientBuilder;
     }
 
     @Override
@@ -56,10 +99,6 @@ public class AgencyServiceIn implements AgencyService {
     }
 
 
-    @Override
-    public Agency getByName(String name) {
-        return agencyRepository.findByName(name);
-    }
 
     @Override
     public Agency getByLocation(String location) {
@@ -128,5 +167,164 @@ public class AgencyServiceIn implements AgencyService {
                     agencyRepository.delete(agency);
                     return ResponseEntity.ok().build();
                 }).orElseThrow(() -> new ResourceNotFoundException(ENTITY, agencyId));
+    }
+
+    @Override
+    public Agency getByName(String name) {
+        Agency agency =agencyRepository.findByName(name);
+        List<AgencyServices> services = agency.getServices();
+        services.forEach(x->{
+            String serviceName=getServiceName(x.getId());
+            String serviceDescription=getServiceDescription(x.getId());
+            String serviceLocation=getServiceLocation(x.getId());
+            Integer serviceScore=getServiceScore(x.getId());
+            Integer serviceNewPrice=getServiceNewPrice(x.getId());
+            Integer servicePrice=getServicePrice(x.getId());
+            String serviceCreationDate=getServiceCreationDate(x.getId());
+            String servicePhotos=getServicePhotos(x.getId());
+            Integer serviceIsOffer=getServiceIsOffer(x.getId());
+            Integer serviceIsPopular=getServiceIsPopular(x.getId());
+
+            x.setServiceName(serviceName);
+            x.setDescription(serviceDescription);
+            x.setLocation(serviceLocation);
+            x.setScore(serviceScore);
+            x.setNewPrice(serviceNewPrice);
+            x.setPrice(servicePrice);
+            x.setCreationDate(serviceCreationDate);
+            x.setPhotos(servicePhotos);
+            x.setIsOffer(serviceIsOffer);
+            x.setIsPopular(serviceIsPopular);
+        });
+        return agency;
+    }
+
+    @Override
+    public String getServiceName(long id) {
+        WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                .baseUrl("http://localhost:8081/service/")
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/service/"))
+                .build();
+        JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                .retrieve().bodyToMono(JsonNode.class).block();
+        String name = block.get("name").asText();
+        return name;
+    }
+
+    @Override
+    public String getServiceDescription(long id) {
+        WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                .baseUrl("http://localhost:8081/service/")
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/service/"))
+                .build();
+        JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                .retrieve().bodyToMono(JsonNode.class).block();
+        String description = block.get("description").asText();
+        return description;
+    }
+
+    @Override
+    public String getServiceLocation(long id) {
+        WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                .baseUrl("http://localhost:8081/service/")
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/service/"))
+                .build();
+        JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                .retrieve().bodyToMono(JsonNode.class).block();
+        String location = block.get("location").asText();
+        return location;
+    }
+
+    @Override
+    public Integer getServiceScore(long id) {
+        WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                .baseUrl("http://localhost:8081/service/")
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/service/"))
+                .build();
+        JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                .retrieve().bodyToMono(JsonNode.class).block();
+        Integer score = block.get("score").asInt();
+        return score;
+    }
+
+    @Override
+    public Integer getServicePrice(long id) {
+        WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                .baseUrl("http://localhost:8081/service/")
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/service/"))
+                .build();
+        JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                .retrieve().bodyToMono(JsonNode.class).block();
+        Integer price = block.get("price").asInt();
+        return price;
+    }
+
+    @Override
+    public Integer getServiceNewPrice(long id) {
+        WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                .baseUrl("http://localhost:8081/service/")
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/service/"))
+                .build();
+        JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                .retrieve().bodyToMono(JsonNode.class).block();
+        Integer newPrice = block.get("newPrice").asInt();
+        return newPrice;
+    }
+
+    @Override
+    public String getServiceCreationDate(long id) {
+        WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                .baseUrl("http://localhost:8081/service/")
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/service/"))
+                .build();
+        JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                .retrieve().bodyToMono(JsonNode.class).block();
+        String creationDate = block.get("creationDate").asText();
+        return creationDate;
+    }
+    @Override
+    public String getServicePhotos(long id) {
+        WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                .baseUrl("http://localhost:8081/service/")
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/service/"))
+                .build();
+        JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                .retrieve().bodyToMono(JsonNode.class).block();
+        String photos = block.get("photos").asText();
+        return photos;
+    }
+
+    @Override
+    public Integer getServiceIsOffer(long id) {
+        WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                .baseUrl("http://localhost:8081/service/")
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/service/"))
+                .build();
+        JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                .retrieve().bodyToMono(JsonNode.class).block();
+        Integer isOffer = block.get("isOffer").asInt();
+        return isOffer;
+    }
+
+    @Override
+    public Integer getServiceIsPopular(long id) {
+        WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                .baseUrl("http://localhost:8081/service/")
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/service/"))
+                .build();
+        JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                .retrieve().bodyToMono(JsonNode.class).block();
+        Integer isPopular = block.get("isPopular").asInt();
+        return isPopular;
     }
 }

@@ -22,8 +22,7 @@ public interface  AgencyService {
 
     Agency getByEmailAndPassword(String email,String password);
 
-    //GET BY NAME
-    Agency getByName(String name);
+
     //GET BY LOCATION
     Agency getByLocation(String location);
 
@@ -37,4 +36,19 @@ public interface  AgencyService {
     Agency getInfoAgencyById(Long agencyId);
 
     ResponseEntity<?> delete(Long agencyId);
+
+    //API CONNECTION
+    String getServiceName(long id);
+    String getServiceDescription(long id);
+    String getServiceLocation(long id);
+    Integer getServiceScore(long id);
+    Integer getServiceNewPrice(long id);
+    Integer getServicePrice(long id);
+    String getServiceCreationDate(long id);
+    String getServicePhotos(long id);
+    Integer getServiceIsOffer(long id);
+    Integer getServiceIsPopular(long id);
+
+    //GET BY NAME
+    Agency getByName(String name);
 }
