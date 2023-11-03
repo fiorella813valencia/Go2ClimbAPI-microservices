@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.List;
 
 
 @Getter
@@ -57,6 +58,8 @@ public class Service {
     @NotNull
     private int isPopular;
 
+    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ServiceActivities> activities;
 
     //Relationships
 //    @ManyToOne(fetch = FetchType.LAZY, optional = false)

@@ -15,6 +15,12 @@ public interface ServiceRepository extends JpaRepository<Service, Long> {
 
     List<Service> findServiceById(Long serviceId);
     Service findByServiceId(Long serviceId);
+    Service findByName(String name);
+    Service findByLocation(String location);
+    Service findByScore(int score);
+
+    Service findByPrice(float price);
+
 
 
 //    @Query("SELECT u FROM Service u WHERE u.isOffer = ?1")

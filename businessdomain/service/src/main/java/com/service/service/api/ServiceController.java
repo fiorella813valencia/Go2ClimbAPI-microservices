@@ -87,6 +87,17 @@ public class ServiceController {
         return mapper.toResource(serviceService.getServiceByServiceId(serviceId));
     }
 
+    @Operation(summary = "Get All services by price", description = "Get All services by price stored in the database.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Services found",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ServiceResource.class))})
+    })
+    @GetMapping("/price/{price}")
+    public ServiceResource getByPrice (@PathVariable float price) {
+        return mapper.toResource(serviceService.getServiceByPrice(price));
+    }
+
 
 
     @Operation(summary = "Create a service", description = "Create a service by agencyId in database.")

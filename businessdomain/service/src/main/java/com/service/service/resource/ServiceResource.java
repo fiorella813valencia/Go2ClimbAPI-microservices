@@ -1,6 +1,9 @@
 package com.service.service.resource;
 
+import com.service.service.domain.model.entity.ServiceActivities;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,4 +23,5 @@ public class ServiceResource {
     private String photos;
     private int isOffer;
     private int isPopular;
+    private List<ServiceActivities> activities;
 }
