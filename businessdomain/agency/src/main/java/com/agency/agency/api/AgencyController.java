@@ -18,6 +18,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import reactor.netty.http.client.HttpClient;
 import java.time.Duration;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
@@ -55,9 +56,9 @@ public class AgencyController {
 
     //funciona GET ALL
     @GetMapping
-    public Page<AgencyResource> getAllAgencies(Pageable pageable)
+    public List<AgencyResource> getAllAgencies()
     {
-        return mapper.modelListPage(agencyService.getAll(), pageable);
+        return mapper.modelList(agencyService.getAll());
     }
 
     //funciona GET BY ID

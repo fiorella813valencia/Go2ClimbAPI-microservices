@@ -75,17 +75,76 @@ public class AgencyServiceIn implements AgencyService {
 
     @Override
     public List<Agency> getAll() {
-        return agencyRepository.findAll();
+        List<Agency> agencies = agencyRepository.findAll();
+
+        // Itera sobre las agencias y sus servicios
+        for (Agency agency : agencies) {
+            List<AgencyServices> agencyServices = agency.getServices();
+
+            agencyServices.forEach(x-> {
+                // in this part we call to microservice service to get the data
+                String serviceName = getServiceName(x.getServiceId());
+                String serviceDescription = getServiceDescription(x.getServiceId());
+                String serviceLocation = getServiceLocation(x.getServiceId());
+                Integer serviceScore = getServiceScore(x.getServiceId());
+                Integer serviceNewPrice = getServiceNewPrice(x.getServiceId());
+                Integer servicePrice = getServicePrice(x.getServiceId());
+                String serviceCreationDate = getServiceCreationDate(x.getServiceId());
+                String servicePhotos = getServicePhotos(x.getServiceId());
+                Integer serviceIsOffer = getServiceIsOffer(x.getServiceId());
+                Integer serviceIsPopular = getServiceIsPopular(x.getServiceId());
+
+                // we update the date of AgencyService
+                x.setServiceName(serviceName);
+                x.setDescription(serviceDescription);
+                x.setLocation(serviceLocation);
+                x.setScore(serviceScore);
+                x.setNewPrice(serviceNewPrice);
+                x.setPrice(servicePrice);
+                x.setCreationDate(serviceCreationDate);
+                x.setPhotos(servicePhotos);
+                x.setIsOffer(serviceIsOffer);
+                x.setIsPopular(serviceIsPopular);
+            });
+        }
+        return agencies;
     }
 
     @Override
-    public Page<Agency> getAll(Pageable pageable) {
+    public Page<Agency> getAllPage(Pageable pageable) {
         return agencyRepository.findAll(pageable);
     }
 
     @Override
     public Agency getByEmail(String email) {
-        return agencyRepository.findByEmail(email);
+
+        Agency agency =agencyRepository.findByEmail(email);
+        List<AgencyServices> services = agency.getServices();
+
+        services.forEach(x->{
+            String serviceName=getServiceName(x.getServiceId());
+            String serviceDescription=getServiceDescription(x.getServiceId());
+            String serviceLocation=getServiceLocation(x.getServiceId());
+            Integer serviceScore=getServiceScore(x.getServiceId());
+            Integer serviceNewPrice=getServiceNewPrice(x.getServiceId());
+            Integer servicePrice=getServicePrice(x.getServiceId());
+            String serviceCreationDate=getServiceCreationDate(x.getServiceId());
+            String servicePhotos=getServicePhotos(x.getServiceId());
+            Integer serviceIsOffer=getServiceIsOffer(x.getServiceId());
+            Integer serviceIsPopular=getServiceIsPopular(x.getServiceId());
+
+            x.setServiceName(serviceName);
+            x.setDescription(serviceDescription);
+            x.setLocation(serviceLocation);
+            x.setScore(serviceScore);
+            x.setNewPrice(serviceNewPrice);
+            x.setPrice(servicePrice);
+            x.setCreationDate(serviceCreationDate);
+            x.setPhotos(servicePhotos);
+            x.setIsOffer(serviceIsOffer);
+            x.setIsPopular(serviceIsPopular);
+        });
+        return agency;
     }
 
     @Override
@@ -102,7 +161,33 @@ public class AgencyServiceIn implements AgencyService {
 
     @Override
     public Agency getByLocation(String location) {
-        return agencyRepository.findByLocation(location);
+        Agency agency=agencyRepository.findByLocation(location);
+        List<AgencyServices> services=agency.getServices();
+
+        services.forEach(x->{
+            String serviceName=getServiceName(x.getServiceId());
+            String serviceDescription=getServiceDescription(x.getServiceId());
+            String serviceLocation=getServiceLocation(x.getServiceId());
+            Integer serviceScore=getServiceScore(x.getServiceId());
+            Integer serviceNewPrice=getServiceNewPrice(x.getServiceId());
+            Integer servicePrice=getServicePrice(x.getServiceId());
+            String serviceCreationDate=getServiceCreationDate(x.getServiceId());
+            String servicePhotos=getServicePhotos(x.getServiceId());
+            Integer serviceIsOffer=getServiceIsOffer(x.getServiceId());
+            Integer serviceIsPopular=getServiceIsPopular(x.getServiceId());
+
+            x.setServiceName(serviceName);
+            x.setDescription(serviceDescription);
+            x.setLocation(serviceLocation);
+            x.setScore(serviceScore);
+            x.setNewPrice(serviceNewPrice);
+            x.setPrice(servicePrice);
+            x.setCreationDate(serviceCreationDate);
+            x.setPhotos(servicePhotos);
+            x.setIsOffer(serviceIsOffer);
+            x.setIsPopular(serviceIsPopular);
+        });
+        return agency;
     }
 
     @Override
@@ -157,8 +242,34 @@ public class AgencyServiceIn implements AgencyService {
 
     @Override
     public Agency getInfoAgencyById(Long agencyId){
-        return agencyRepository.findById(agencyId).orElseThrow(() ->
+        Agency agency = agencyRepository.findById(agencyId).orElseThrow(() ->
                 new ResourceNotFoundException(ENTITY, agencyId));
+        List<AgencyServices> services = agency.getServices();
+
+        services.forEach(x->{
+            String serviceName=getServiceName(x.getServiceId());
+            String serviceDescription=getServiceDescription(x.getServiceId());
+            String serviceLocation=getServiceLocation(x.getServiceId());
+            Integer serviceScore=getServiceScore(x.getServiceId());
+            Integer serviceNewPrice=getServiceNewPrice(x.getServiceId());
+            Integer servicePrice=getServicePrice(x.getServiceId());
+            String serviceCreationDate=getServiceCreationDate(x.getServiceId());
+            String servicePhotos=getServicePhotos(x.getServiceId());
+            Integer serviceIsOffer=getServiceIsOffer(x.getServiceId());
+            Integer serviceIsPopular=getServiceIsPopular(x.getServiceId());
+
+            x.setServiceName(serviceName);
+            x.setDescription(serviceDescription);
+            x.setLocation(serviceLocation);
+            x.setScore(serviceScore);
+            x.setNewPrice(serviceNewPrice);
+            x.setPrice(servicePrice);
+            x.setCreationDate(serviceCreationDate);
+            x.setPhotos(servicePhotos);
+            x.setIsOffer(serviceIsOffer);
+            x.setIsPopular(serviceIsPopular);
+        });
+        return agency;
     }
 
     @Override
@@ -174,6 +285,7 @@ public class AgencyServiceIn implements AgencyService {
     public Agency getByName(String name) {
         Agency agency =agencyRepository.findByName(name);
         List<AgencyServices> services = agency.getServices();
+
         services.forEach(x->{
             String serviceName=getServiceName(x.getServiceId());
             String serviceDescription=getServiceDescription(x.getServiceId());
@@ -203,9 +315,9 @@ public class AgencyServiceIn implements AgencyService {
     @Override
     public String getServiceName(long id) {
         WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                .baseUrl("http://localhost:8081/service/")
+                .baseUrl("http://localhost:8081/api/v1/service/")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/service/"))
+                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
                 .build();
         JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
                 .retrieve().bodyToMono(JsonNode.class).block();
@@ -216,9 +328,9 @@ public class AgencyServiceIn implements AgencyService {
     @Override
     public String getServiceDescription(long id) {
         WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                .baseUrl("http://localhost:8081/service/")
+                .baseUrl("http://localhost:8081/api/v1/service/")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/service/"))
+                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
                 .build();
         JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
                 .retrieve().bodyToMono(JsonNode.class).block();
@@ -229,9 +341,9 @@ public class AgencyServiceIn implements AgencyService {
     @Override
     public String getServiceLocation(long id) {
         WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                .baseUrl("http://localhost:8081/service/")
+                .baseUrl("http://localhost:8081/api/v1/service/")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/service/"))
+                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
                 .build();
         JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
                 .retrieve().bodyToMono(JsonNode.class).block();
@@ -242,9 +354,9 @@ public class AgencyServiceIn implements AgencyService {
     @Override
     public Integer getServiceScore(long id) {
         WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                .baseUrl("http://localhost:8081/service/")
+                .baseUrl("http://localhost:8081/api/v1/service/")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/service/"))
+                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
                 .build();
         JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
                 .retrieve().bodyToMono(JsonNode.class).block();
@@ -255,9 +367,9 @@ public class AgencyServiceIn implements AgencyService {
     @Override
     public Integer getServicePrice(long id) {
         WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                .baseUrl("http://localhost:8081/service/")
+                .baseUrl("http://localhost:8081/api/v1/service/")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/service/"))
+                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
                 .build();
         JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
                 .retrieve().bodyToMono(JsonNode.class).block();
@@ -268,9 +380,9 @@ public class AgencyServiceIn implements AgencyService {
     @Override
     public Integer getServiceNewPrice(long id) {
         WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                .baseUrl("http://localhost:8081/service/")
+                .baseUrl("http://localhost:8081/api/v1/service/")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/service/"))
+                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
                 .build();
         JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
                 .retrieve().bodyToMono(JsonNode.class).block();
@@ -281,9 +393,9 @@ public class AgencyServiceIn implements AgencyService {
     @Override
     public String getServiceCreationDate(long id) {
         WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                .baseUrl("http://localhost:8081/service/")
+                .baseUrl("http://localhost:8081/api/v1/service/")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/service/"))
+                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
                 .build();
         JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
                 .retrieve().bodyToMono(JsonNode.class).block();
@@ -293,9 +405,9 @@ public class AgencyServiceIn implements AgencyService {
     @Override
     public String getServicePhotos(long id) {
         WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                .baseUrl("http://localhost:8081/service/")
+                .baseUrl("http://localhost:8081/api/v1/service/")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/service/"))
+                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
                 .build();
         JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
                 .retrieve().bodyToMono(JsonNode.class).block();
@@ -306,9 +418,9 @@ public class AgencyServiceIn implements AgencyService {
     @Override
     public Integer getServiceIsOffer(long id) {
         WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                .baseUrl("http://localhost:8081/service/")
+                .baseUrl("http://localhost:8081/api/v1/service/")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/service/"))
+                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
                 .build();
         JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
                 .retrieve().bodyToMono(JsonNode.class).block();
@@ -319,9 +431,9 @@ public class AgencyServiceIn implements AgencyService {
     @Override
     public Integer getServiceIsPopular(long id) {
         WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                .baseUrl("http://localhost:8081/service/")
+                .baseUrl("http://localhost:8081/api/v1/service/")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/service/"))
+                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
                 .build();
         JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
                 .retrieve().bodyToMono(JsonNode.class).block();
