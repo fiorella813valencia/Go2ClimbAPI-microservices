@@ -12,7 +12,7 @@ public interface  AgencyService {
 
     List<Agency> getAll();
 
-    Page<Agency> getAll(Pageable pageable);
+    Page<Agency> getAllPage(Pageable pageable);
 
     //GET BY EMAIL
     Agency getByEmail(String email);

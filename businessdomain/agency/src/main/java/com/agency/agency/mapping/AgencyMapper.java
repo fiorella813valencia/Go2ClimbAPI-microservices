@@ -29,4 +29,8 @@ public class AgencyMapper implements Serializable {
     public Page<AgencyResource> modelListPage(List<Agency> modelList, Pageable pageable){
         return new PageImpl<>(mapper.mapList(modelList, AgencyResource.class), pageable, modelList.size());
     }
+
+    public List<AgencyResource> modelList(List<Agency> modelList){
+        return mapper.mapList(modelList, AgencyResource.class);
+    }
 }
