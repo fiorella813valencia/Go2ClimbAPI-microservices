@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin("*")
 @Tag(name = "Service", description = "Read services")
 @RestController
-@RequestMapping("/service")
+@RequestMapping("api/v1/service")
 public class ServiceController {
     private final ServiceService serviceService;
     private final ServiceMapper mapper;
