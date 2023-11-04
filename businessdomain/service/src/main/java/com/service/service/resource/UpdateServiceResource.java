@@ -8,8 +8,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -32,9 +30,9 @@ public class UpdateServiceResource {
     @NotNull
     private int score;
     @NotNull
-    private float price;
+    private Float price;
     @NotNull
-    private float newPrice;
+    private Float newPrice;
 
     @NotBlank
     private String creationDate;

@@ -17,8 +17,8 @@ public class ServiceResource {
     private String description;
     private String location;
     private int score;
-    private float price;
-    private float newPrice;
+    private Float price;
+    private Float newPrice;
     private String creationDate;
     private String photos;
     private int isOffer;
