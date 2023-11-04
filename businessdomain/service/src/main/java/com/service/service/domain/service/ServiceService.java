@@ -12,7 +12,9 @@ public interface ServiceService {
     Service getServiceById(Long Id);
     Service getServiceByServiceId(Long serviceId);
     Service getServiceByLocation(String location);
-    Service getServiceByPrice(float price);
+    Service getServiceByPrice(Float price);
+
+    Service getServiceByName(String name);
 
 //    List<Service> getAllByAgencyId(Long agencyId);
 //

@@ -39,10 +39,10 @@ public class Service {
     private int score;
 
     @NotNull
-    private float price;
+    private Float price;
 
     @NotNull
-    private float newPrice;
+    private Float newPrice;
 
     @NotNull
     @NotBlank

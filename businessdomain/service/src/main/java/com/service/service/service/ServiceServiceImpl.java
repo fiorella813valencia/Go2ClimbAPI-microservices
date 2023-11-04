@@ -38,14 +38,14 @@ public class ServiceServiceImpl implements ServiceService {
 
     //webClient requires HttpClient library to work propertly
     HttpClient client = HttpClient.create()
-            //Connection Timeout: is a period within which a connection between a client and a server must be established
+            //explanation of connection timeout
+            // is a period within which a connection between a client and a server must be established
             .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
             .option(ChannelOption.SO_KEEPALIVE, true)
             .option(EpollChannelOption.TCP_KEEPIDLE, 300)
             .option(EpollChannelOption.TCP_KEEPINTVL, 60)
-            //Response Timeout: The maximun time we wait to receive a response after sending a request
+            //response timeout is the maximun time we wait to receive a response after sending a request
             .responseTimeout(Duration.ofSeconds(1))
-            // Read and Write Timeout: A read timeout occurs when no data was read within a certain
             //period of time, while the write timeout when a write operation cannot finish at a specific time
             .doOnConnected(connection -> {
                 connection.addHandlerLast(new ReadTimeoutHandler(5000, TimeUnit.MILLISECONDS));
@@ -57,31 +57,89 @@ public class ServiceServiceImpl implements ServiceService {
         this.validator = validator;
         this.webClientBuilder = webClientBuilder;
     }
-
-
     @Override
     public List<Service> getAll() {
-        return serviceRepository.findAll();
+        List<Service> services=serviceRepository.findAll();
+        //this goes over all services and their activities
+        for (Service service:services){
+            List<ServiceActivities> serviceActivities=service.getActivities();
+
+            serviceActivities.forEach(x->{
+                String serviceName=getActivityName(x.getActivityId());
+                String serviceDescription=getActivityDescription(x.getActivityId());
+
+                x.setName(serviceName);
+                x.setDescription(serviceDescription);
+            });
+        }
+        return services;
     }
 
     @Override
     public Service getServiceById(Long Id) {
-        return serviceRepository.findById(Id).orElseThrow(() ->
+        Service service =serviceRepository.findById(Id).orElseThrow(() ->
                 new ResourceNotFoundException(ENTITY, Id));
+        List<ServiceActivities> activities = service.getActivities();
+
+        activities.forEach(x->{
+            String serviceName=getActivityName(x.getActivityId());
+            String serviceDescription=getActivityDescription(x.getActivityId());
+
+            x.setName(serviceName);
+            x.setDescription(serviceDescription);
+        });
+        return service;
+    }
+    @Override
+    public Service getServiceByName(String name){
+        Service service =serviceRepository.findByName(name);
+        List<ServiceActivities> activities = service.getActivities();
+
+        activities.forEach(x->{
+            String serviceName=getActivityName(x.getActivityId());
+            String serviceDescription=getActivityDescription(x.getActivityId());
+
+            x.setName(serviceName);
+            x.setDescription(serviceDescription);
+        });
+        return service;
     }
 
     @Override
     public Service getServiceByServiceId(Long serviceId) {
-        return serviceRepository.findByServiceId(serviceId);
+
+        Service service =serviceRepository.findByServiceId(serviceId);
+        List<ServiceActivities> activities = service.getActivities();
+
+        activities.forEach(x->{
+            String serviceName=getActivityName(x.getActivityId());
+            String serviceDescription=getActivityDescription(x.getActivityId());
+
+            x.setName(serviceName);
+            x.setDescription(serviceDescription);
+        });
+
+
+        return service;
     }
 
     @Override
     public Service getServiceByLocation(String location) {
-        return serviceRepository.findByLocation(location);
+        Service service=serviceRepository.findByLocation(location);
+        List<ServiceActivities> activities=service.getActivities();
+        activities.forEach(x->{
+            String serviceName=getActivityName(x.getActivityId());
+            String serviceDescription=getActivityDescription(x.getActivityId());
+
+            x.setName(serviceName);
+            x.setDescription(serviceDescription);
+        });
+
+        return service;
     }
 
     @Override
-    public Service getServiceByPrice(float price) {
+    public Service getServiceByPrice(Float price) {
         Service service =serviceRepository.findByPrice(price);
         List<ServiceActivities> activities = service.getActivities();
 
@@ -128,6 +186,24 @@ public class ServiceServiceImpl implements ServiceService {
 
         if (!violations.isEmpty())
             throw new ResourceValidationException(ENTITY, violations);
+
+        Service serviceWithServiceId = serviceRepository.findByServiceId(service.getServiceId());
+        if (serviceWithServiceId != null)
+            throw new ResourceValidationException(ENTITY,
+                    "A service with the serviceId already exists.");
+
+        Service serviceWithName = serviceRepository.findByName(service.getName());
+
+        if (serviceWithName != null)
+            throw new ResourceValidationException(ENTITY,
+                    "A service with the same name already exists.");
+
+        List<ServiceActivities> activities = service.getActivities();
+        if (activities != null) {
+            for (ServiceActivities activity : activities) {
+                activity.setService(service);
+            }
+        }
 
         return serviceRepository.save(service);
     }
