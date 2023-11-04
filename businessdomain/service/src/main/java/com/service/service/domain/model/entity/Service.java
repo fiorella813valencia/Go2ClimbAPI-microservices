@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.List;
 
 
 @Getter
@@ -38,10 +39,10 @@ public class Service {
     private int score;
 
     @NotNull
-    private float price;
+    private Float price;
 
     @NotNull
-    private float newPrice;
+    private Float newPrice;
 
     @NotNull
     @NotBlank
@@ -57,6 +58,8 @@ public class Service {
     @NotNull
     private int isPopular;
 
+    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ServiceActivities> activities;
 
     //Relationships
 //    @ManyToOne(fetch = FetchType.LAZY, optional = false)

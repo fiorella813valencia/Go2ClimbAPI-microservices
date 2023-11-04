@@ -1,8 +1,6 @@
 package com.service.service.domain.service;
 
 import com.service.service.domain.model.entity.Service;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -13,6 +11,10 @@ public interface ServiceService {
 
     Service getServiceById(Long Id);
     Service getServiceByServiceId(Long serviceId);
+    Service getServiceByLocation(String location);
+    Service getServiceByPrice(Float price);
+
+    Service getServiceByName(String name);
 
 //    List<Service> getAllByAgencyId(Long agencyId);
 //
@@ -30,5 +32,10 @@ public interface ServiceService {
     Service update(Long serviceId, Service service);
 
     ResponseEntity<?> delete(Long Id);
+
+    //API CONNECTION
+    String getActivityName(long id);
+    String getActivityDescription(long id);
+
 
 }

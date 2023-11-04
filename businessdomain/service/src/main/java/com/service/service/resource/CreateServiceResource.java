@@ -1,8 +1,14 @@
 package com.service.service.resource;
 
+import com.service.service.domain.model.entity.ServiceActivities;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -22,9 +28,9 @@ public class CreateServiceResource {
     @NotNull
     private int score;
     @NotNull
-    private float price;
+    private Float price;
     @NotNull
-    private float newPrice;
+    private Float newPrice;
 
     @NotBlank
     private String creationDate;
@@ -35,4 +41,7 @@ public class CreateServiceResource {
     private int isOffer;
     @NotNull
     private int isPopular;
+
+    @OneToMany(fetch= FetchType.LAZY, mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ServiceActivities> activities;
 }

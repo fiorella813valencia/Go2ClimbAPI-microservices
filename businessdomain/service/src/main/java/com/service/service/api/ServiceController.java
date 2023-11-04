@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -87,6 +88,41 @@ public class ServiceController {
         return mapper.toResource(serviceService.getServiceByServiceId(serviceId));
     }
 
+    //funciona NAME
+    @Operation(summary = "Get All services by name", description = "Get All services by name stored in the database.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Services found",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ServiceResource.class))})
+    })
+    @GetMapping("/name/{name}")
+    public ServiceResource getByName (@PathVariable String name) {
+        return mapper.toResource(serviceService.getServiceByName(name));
+    }
+
+    //funciona LOCATION
+    @Operation(summary = "Get All services by location", description = "Get All services by location stored in the database.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Services found",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ServiceResource.class))})
+    })
+    @GetMapping("/location/{location}")
+    public ServiceResource getByLocation (@PathVariable String location) {
+        return mapper.toResource(serviceService.getServiceByLocation(location));
+    }
+
+    @Operation(summary = "Get All services by price", description = "Get All services by price stored in the database.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Services found",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ServiceResource.class))})
+    })
+    @GetMapping("/price/{price}")
+    public ServiceResource getByPrice (@PathVariable float price) {
+        return mapper.toResource(serviceService.getServiceByPrice(price));
+    }
+
 
 
     @Operation(summary = "Create a service", description = "Create a service by agencyId in database.")
@@ -95,6 +131,7 @@ public class ServiceController {
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ServiceResource.class))})
     })
+    @Transactional
     @PostMapping
     public ServiceResource createService(@RequestBody CreateServiceResource resource) {
         return mapper.toResource(serviceService.create(mapper.toModel(resource)));
