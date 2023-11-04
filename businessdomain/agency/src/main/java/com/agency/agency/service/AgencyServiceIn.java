@@ -7,7 +7,6 @@ import com.agency.agency.domain.persistence.AgencyRepository;
 import com.agency.agency.domain.service.AgencyService;
 import com.agency.agency.shared.exception.ResourceNotFoundException;
 import com.agency.agency.shared.exception.ResourceValidationException;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.epoll.EpollChannelOption;
@@ -25,17 +24,9 @@ import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
-//imports from webflux
-import io.netty.channel.ChannelOption;
-import io.netty.channel.epoll.EpollChannelOption;
-import io.netty.handler.timeout.ReadTimeoutHandler;
-import io.netty.handler.timeout.WriteTimeoutHandler;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.netty.http.client.HttpClient;
+
 import java.time.Duration;
 import java.util.Collections;
-import java.util.concurrent.TimeUnit;
-import java.time.Duration;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -77,7 +68,7 @@ public class AgencyServiceIn implements AgencyService {
     public List<Agency> getAll() {
         List<Agency> agencies = agencyRepository.findAll();
 
-        // Itera sobre las agencias y sus servicios
+        // this goes ovwer the agencies and their services
         for (Agency agency : agencies) {
             List<AgencyServices> agencyServices = agency.getServices();
 
