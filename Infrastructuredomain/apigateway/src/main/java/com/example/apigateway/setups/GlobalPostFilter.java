@@ -17,7 +17,7 @@ public class GlobalPostFilter {
         return ((exchange, chain) -> {
             return chain.filter(exchange)
                     .then(Mono.fromRunnable(()->{
-                        log.info("Global Post Filter executed");
+                        log.info("Global Post AuthenticationFilter executed");
                     }));
         });
     }
