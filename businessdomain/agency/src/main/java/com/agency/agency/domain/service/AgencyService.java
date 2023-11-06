@@ -51,4 +51,8 @@ public interface  AgencyService {
 
     //GET BY NAME
     Agency getByName(String name);
+
+    //JWT SERVICES
+//    public String generateToken(String username);
+//    public void validateToken(String token);
 }

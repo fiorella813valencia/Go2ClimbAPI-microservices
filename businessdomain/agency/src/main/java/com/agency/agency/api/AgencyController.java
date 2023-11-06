@@ -4,15 +4,21 @@ import com.agency.agency.domain.service.AgencyService;
 import com.agency.agency.mapping.AgencyMapper;
 import com.agency.agency.resource.AgencyResource;
 import com.agency.agency.resource.CreateAgencyResource;
+import com.agency.agency.resource.CreateAuthentication;
 import com.agency.agency.resource.UpdateAgencyResource;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.epoll.EpollChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -28,6 +34,8 @@ import java.util.concurrent.TimeUnit;
 public class AgencyController {
     private final AgencyService agencyService;
     private final AgencyMapper mapper;
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
 //    private final WebClient.Builder webClientBuilder;
 //
@@ -85,20 +93,17 @@ public class AgencyController {
     }
 
     // funciona GET BY LOCATION
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("location/{agencyLocation}")
-    public AgencyResource getInfoAgencyByLocation(@PathVariable("agencyLocation") String agencyLocation) {
+    public AgencyResource getInfoAgencyByLocation(@PathVariable("agencyLocation") String agencyLocation,@RequestHeader("Authorization") String token) {
+        System.out.println("HOLAA COMO ESTASSSSSSSSSSSSSSSSS");
         return mapper.toResource(agencyService.getByLocation(agencyLocation));
     }
 
 
 
 
-    //funciona POST
-    @Transactional
-    @PostMapping
-    public AgencyResource createAgency(@RequestBody CreateAgencyResource resource){
-        return mapper.toResource(agencyService.create(mapper.toModel(resource)));
-    }
+
 
     //funciona UPDATE
     @PutMapping("/{agencyId}")

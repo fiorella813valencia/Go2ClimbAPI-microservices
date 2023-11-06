@@ -14,6 +14,7 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -21,6 +22,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
@@ -40,6 +42,10 @@ public class AgencyServiceIn implements AgencyService {
     private final Validator validator;
 
     private final WebClient.Builder webClientBuilder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JWTService jwtService;
 
 
     //webClient requires HttpClient library to work propertly
@@ -188,6 +194,9 @@ public class AgencyServiceIn implements AgencyService {
         if(!violations.isEmpty())
             throw new ResourceValidationException(ENTITY, violations);
 
+        //here we encode the password sdjfhasjfd heeelp i dunno what im doing
+        agency.setPassword(passwordEncoder.encode(agency.getPassword()));
+
         Agency agencyWithEmail = agencyRepository.findByEmail(agency.getEmail());
 
         if (agencyWithEmail != null)
@@ -302,7 +311,17 @@ public class AgencyServiceIn implements AgencyService {
         });
         return agency;
     }
-
+    //JWT AUTHENTICATION
+//    @Override
+//    public String generateToken(String username) {
+//        return jwtService.generateToken(username);
+//    }
+//
+//    @Override
+//    public void validateToken(String token) {
+//        jwtService.validateToken(token);
+//    }
+    //END JWT AUTHENTICATION
     @Override
     public String getServiceName(long id) {
         WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
