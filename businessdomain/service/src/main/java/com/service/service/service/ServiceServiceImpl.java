@@ -19,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.netty.http.client.HttpClient;
 
 import java.time.Duration;
@@ -242,27 +243,43 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Override
     public String getActivityName(long id) {
-        WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                .baseUrl("http://localhost:8084/api/activities/")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8084/api/activities/"))
-                .build();
-        JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
-                .retrieve().bodyToMono(JsonNode.class).block();
-        String name = block.get("name").asText();
-        return name;
+        try{
+            WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                    .baseUrl("http://localhost:8084/api/activities/")
+                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8084/api/activities/"))
+                    .build();
+            JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                    .retrieve().bodyToMono(JsonNode.class).block();
+            String name = block.get("name").asText();
+            return name;
+        }catch (WebClientResponseException e) {
+            // La aplicación activities no está en funcionamiento o la URL no responde
+            return null; // Devuelve un valor predeterminado o nulo
+        } catch (Exception ex) {
+            // Otra excepción, manejar según sea necesario
+            return null; // Devuelve un valor predeterminado o nulo
+        }
     }
 
     @Override
     public String getActivityDescription(long id) {
-        WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                .baseUrl("http://localhost:8084/api/activities/")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8084/api/activities/"))
-                .build();
-        JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
-                .retrieve().bodyToMono(JsonNode.class).block();
-        String description = block.get("description").asText();
-        return description;
+        try{
+            WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                    .baseUrl("http://localhost:8084/api/activities/")
+                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8084/api/activities/"))
+                    .build();
+            JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                    .retrieve().bodyToMono(JsonNode.class).block();
+            String description = block.get("description").asText();
+            return description;
+        }catch (WebClientResponseException e) {
+            // La aplicación activities no está en funcionamiento o la URL no responde
+            return null; // Devuelve un valor predeterminado o nulo
+        } catch (Exception ex) {
+            // Otra excepción, manejar según sea necesario
+            return null; // Devuelve un valor predeterminado o nulo
+        }
     }
 }
