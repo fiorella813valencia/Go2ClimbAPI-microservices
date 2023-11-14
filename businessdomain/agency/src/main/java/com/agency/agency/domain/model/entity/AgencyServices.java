@@ -2,8 +2,6 @@ package com.agency.agency.domain.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
@@ -19,24 +17,15 @@ public class AgencyServices {
     private Long serviceId;
     @Transient
     private String serviceName;
-    @NotBlank
     private String description;
-    @NotBlank
     private String location;
-    @NotNull
-    private int score;
-    @NotNull
-    private float price;
-    @NotNull
-    private float newPrice;
-    @NotBlank
+    private Integer score;
+    private Float price;
+    private Float newPrice;
     private String creationDate;
-    @NotBlank
     private String photos;
-    @NotNull
-    private int isOffer;
-    @NotNull
-    private int isPopular;
+    private Integer isOffer;
+    private Integer isPopular;
 
 
 //    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Agency.class) ///

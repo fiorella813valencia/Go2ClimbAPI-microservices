@@ -25,6 +25,7 @@ import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.netty.http.client.HttpClient;
 
 import java.time.Duration;
@@ -80,16 +81,16 @@ public class AgencyServiceIn implements AgencyService {
 
             agencyServices.forEach(x-> {
                 // in this part we call to microservice service to get the data
-                String serviceName = getServiceName(x.getServiceId());
-                String serviceDescription = getServiceDescription(x.getServiceId());
-                String serviceLocation = getServiceLocation(x.getServiceId());
-                Integer serviceScore = getServiceScore(x.getServiceId());
-                Integer serviceNewPrice = getServiceNewPrice(x.getServiceId());
-                Integer servicePrice = getServicePrice(x.getServiceId());
-                String serviceCreationDate = getServiceCreationDate(x.getServiceId());
-                String servicePhotos = getServicePhotos(x.getServiceId());
-                Integer serviceIsOffer = getServiceIsOffer(x.getServiceId());
-                Integer serviceIsPopular = getServiceIsPopular(x.getServiceId());
+                String serviceName=getServiceName(x.getServiceId());
+                String serviceDescription=getServiceDescription(x.getServiceId());
+                String serviceLocation=getServiceLocation(x.getServiceId());
+                Integer serviceScore=getServiceScore(x.getServiceId());
+                Float serviceNewPrice= Float.valueOf(getServiceNewPrice(x.getServiceId()));
+                Float servicePrice= Float.valueOf(getServicePrice(x.getServiceId()));
+                String serviceCreationDate=getServiceCreationDate(x.getServiceId());
+                String servicePhotos=getServicePhotos(x.getServiceId());
+                Integer serviceIsOffer=getServiceIsOffer(x.getServiceId());
+                Integer serviceIsPopular=getServiceIsPopular(x.getServiceId());
 
                 // we update the date of AgencyService
                 x.setServiceName(serviceName);
@@ -123,8 +124,8 @@ public class AgencyServiceIn implements AgencyService {
             String serviceDescription=getServiceDescription(x.getServiceId());
             String serviceLocation=getServiceLocation(x.getServiceId());
             Integer serviceScore=getServiceScore(x.getServiceId());
-            Integer serviceNewPrice=getServiceNewPrice(x.getServiceId());
-            Integer servicePrice=getServicePrice(x.getServiceId());
+            Float serviceNewPrice= Float.valueOf(getServiceNewPrice(x.getServiceId()));
+            Float servicePrice= Float.valueOf(getServicePrice(x.getServiceId()));
             String serviceCreationDate=getServiceCreationDate(x.getServiceId());
             String servicePhotos=getServicePhotos(x.getServiceId());
             Integer serviceIsOffer=getServiceIsOffer(x.getServiceId());
@@ -166,8 +167,8 @@ public class AgencyServiceIn implements AgencyService {
             String serviceDescription=getServiceDescription(x.getServiceId());
             String serviceLocation=getServiceLocation(x.getServiceId());
             Integer serviceScore=getServiceScore(x.getServiceId());
-            Integer serviceNewPrice=getServiceNewPrice(x.getServiceId());
-            Integer servicePrice=getServicePrice(x.getServiceId());
+            Float serviceNewPrice= getServiceNewPrice(x.getServiceId());
+            Float servicePrice= getServicePrice(x.getServiceId());
             String serviceCreationDate=getServiceCreationDate(x.getServiceId());
             String servicePhotos=getServicePhotos(x.getServiceId());
             Integer serviceIsOffer=getServiceIsOffer(x.getServiceId());
@@ -251,8 +252,8 @@ public class AgencyServiceIn implements AgencyService {
             String serviceDescription=getServiceDescription(x.getServiceId());
             String serviceLocation=getServiceLocation(x.getServiceId());
             Integer serviceScore=getServiceScore(x.getServiceId());
-            Integer serviceNewPrice=getServiceNewPrice(x.getServiceId());
-            Integer servicePrice=getServicePrice(x.getServiceId());
+            Float serviceNewPrice= getServiceNewPrice(x.getServiceId());
+            Float servicePrice= getServicePrice(x.getServiceId());
             String serviceCreationDate=getServiceCreationDate(x.getServiceId());
             String servicePhotos=getServicePhotos(x.getServiceId());
             Integer serviceIsOffer=getServiceIsOffer(x.getServiceId());
@@ -291,8 +292,8 @@ public class AgencyServiceIn implements AgencyService {
             String serviceDescription=getServiceDescription(x.getServiceId());
             String serviceLocation=getServiceLocation(x.getServiceId());
             Integer serviceScore=getServiceScore(x.getServiceId());
-            Integer serviceNewPrice=getServiceNewPrice(x.getServiceId());
-            Integer servicePrice=getServicePrice(x.getServiceId());
+            Float serviceNewPrice= getServiceNewPrice(x.getServiceId());
+            Float servicePrice= getServicePrice(x.getServiceId());
             String serviceCreationDate=getServiceCreationDate(x.getServiceId());
             String servicePhotos=getServicePhotos(x.getServiceId());
             Integer serviceIsOffer=getServiceIsOffer(x.getServiceId());
@@ -324,130 +325,192 @@ public class AgencyServiceIn implements AgencyService {
     //END JWT AUTHENTICATION
     @Override
     public String getServiceName(long id) {
-        WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                .baseUrl("http://localhost:8081/api/v1/service/")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
-                .build();
-        JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
-                .retrieve().bodyToMono(JsonNode.class).block();
-        String name = block.get("name").asText();
-        return name;
+        try{
+            WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                    .baseUrl("http://localhost:8081/api/v1/service/")
+                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
+                    .build();
+            JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                    .retrieve().bodyToMono(JsonNode.class).block();
+            String name = block.get("name").asText();
+            return name;
+        }catch (WebClientResponseException e) {
+            return null;
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     @Override
     public String getServiceDescription(long id) {
-        WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                .baseUrl("http://localhost:8081/api/v1/service/")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
-                .build();
-        JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
-                .retrieve().bodyToMono(JsonNode.class).block();
-        String description = block.get("description").asText();
-        return description;
+        try{
+            WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                    .baseUrl("http://localhost:8081/api/v1/service/")
+                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
+                    .build();
+            JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                    .retrieve().bodyToMono(JsonNode.class).block();
+            String description = block.get("description").asText();
+            return description;
+        }catch (WebClientResponseException e) {
+            return null;
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     @Override
     public String getServiceLocation(long id) {
-        WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                .baseUrl("http://localhost:8081/api/v1/service/")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
-                .build();
-        JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
-                .retrieve().bodyToMono(JsonNode.class).block();
-        String location = block.get("location").asText();
-        return location;
+        try{
+            WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                    .baseUrl("http://localhost:8081/api/v1/service/")
+                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
+                    .build();
+            JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                    .retrieve().bodyToMono(JsonNode.class).block();
+            String location = block.get("location").asText();
+            return location;
+        }catch (WebClientResponseException e) {
+            return null;
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     @Override
     public Integer getServiceScore(long id) {
-        WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                .baseUrl("http://localhost:8081/api/v1/service/")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
-                .build();
-        JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
-                .retrieve().bodyToMono(JsonNode.class).block();
-        Integer score = block.get("score").asInt();
-        return score;
+        try{
+            WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                    .baseUrl("http://localhost:8081/api/v1/service/")
+                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
+                    .build();
+            JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                    .retrieve().bodyToMono(JsonNode.class).block();
+            Integer score = block.get("score").asInt();
+            return score;
+        }catch (WebClientResponseException e) {
+            return null;
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     @Override
-    public Integer getServicePrice(long id) {
-        WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                .baseUrl("http://localhost:8081/api/v1/service/")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
-                .build();
-        JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
-                .retrieve().bodyToMono(JsonNode.class).block();
-        Integer price = block.get("price").asInt();
-        return price;
+    public Float getServicePrice(long id) {
+
+        try{
+            WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                    .baseUrl("http://localhost:8081/api/v1/service/")
+                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
+                    .build();
+            JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                    .retrieve().bodyToMono(JsonNode.class).block();
+            Float price = (float) block.get("price").asInt();
+            return price;
+        }catch (WebClientResponseException e) {
+            return null;
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     @Override
-    public Integer getServiceNewPrice(long id) {
-        WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                .baseUrl("http://localhost:8081/api/v1/service/")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
-                .build();
-        JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
-                .retrieve().bodyToMono(JsonNode.class).block();
-        Integer newPrice = block.get("newPrice").asInt();
-        return newPrice;
+    public Float getServiceNewPrice(long id) {
+
+        try{
+            WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                    .baseUrl("http://localhost:8081/api/v1/service/")
+                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
+                    .build();
+            JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                    .retrieve().bodyToMono(JsonNode.class).block();
+            Float newPrice = (float) block.get("newPrice").asInt();
+            return newPrice;
+        }catch (WebClientResponseException e) {
+            return null;
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     @Override
     public String getServiceCreationDate(long id) {
-        WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                .baseUrl("http://localhost:8081/api/v1/service/")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
-                .build();
-        JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
-                .retrieve().bodyToMono(JsonNode.class).block();
-        String creationDate = block.get("creationDate").asText();
-        return creationDate;
+        try{
+            WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                    .baseUrl("http://localhost:8081/api/v1/service/")
+                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
+                    .build();
+            JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                    .retrieve().bodyToMono(JsonNode.class).block();
+            String creationDate = block.get("creationDate").asText();
+            return creationDate;
+        }catch (WebClientResponseException e) {
+            return null;
+        } catch (Exception ex) {
+            return null;
+        }
     }
     @Override
     public String getServicePhotos(long id) {
-        WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                .baseUrl("http://localhost:8081/api/v1/service/")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
-                .build();
-        JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
-                .retrieve().bodyToMono(JsonNode.class).block();
-        String photos = block.get("photos").asText();
-        return photos;
+        try{
+            WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                    .baseUrl("http://localhost:8081/api/v1/service/")
+                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
+                    .build();
+            JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                    .retrieve().bodyToMono(JsonNode.class).block();
+            String photos = block.get("photos").asText();
+            return photos;
+        }catch (WebClientResponseException e) {
+            return null;
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     @Override
     public Integer getServiceIsOffer(long id) {
-        WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                .baseUrl("http://localhost:8081/api/v1/service/")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
-                .build();
-        JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
-                .retrieve().bodyToMono(JsonNode.class).block();
-        Integer isOffer = block.get("isOffer").asInt();
-        return isOffer;
+        try{
+            WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                    .baseUrl("http://localhost:8081/api/v1/service/")
+                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
+                    .build();
+            JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                    .retrieve().bodyToMono(JsonNode.class).block();
+            Integer isOffer = block.get("isOffer").asInt();
+            return isOffer;
+        }catch (WebClientResponseException e) {
+            return null;
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     @Override
     public Integer getServiceIsPopular(long id) {
-        WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                .baseUrl("http://localhost:8081/api/v1/service/")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
-                .build();
-        JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
-                .retrieve().bodyToMono(JsonNode.class).block();
-        Integer isPopular = block.get("isPopular").asInt();
-        return isPopular;
+        try {
+            WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                    .baseUrl("http://localhost:8081/api/v1/service/")
+                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
+                    .build();
+            JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                    .retrieve().bodyToMono(JsonNode.class).block();
+            Integer isPopular = block.get("isPopular").asInt();
+            return isPopular;
+        }catch (WebClientResponseException e) {
+            return null;
+        } catch (Exception ex) {
+            return null;
+        }
     }
 }

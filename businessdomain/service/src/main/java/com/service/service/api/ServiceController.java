@@ -12,10 +12,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @CrossOrigin("*")
 @Tag(name = "Service", description = "Read services")
@@ -38,8 +38,8 @@ public class ServiceController {
                             schema = @Schema(implementation = ServiceResource.class))})
     })
     @GetMapping
-    public Page<ServiceResource> getAllServices(Pageable pageable) {
-        return mapper.modelListPage(serviceService.getAll(), pageable);
+    public List<ServiceResource> getAllServices() {
+        return mapper.modelList(serviceService.getAll());
     }
 
 //    @Operation(summary = "Get All services filtered by offer", description = "Get All services filtered by offer stored in the database.")

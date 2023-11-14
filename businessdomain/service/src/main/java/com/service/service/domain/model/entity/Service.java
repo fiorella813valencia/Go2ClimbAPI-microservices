@@ -53,10 +53,10 @@ public class Service {
     private String photos;
 
     @NotNull
-    private int isOffer;
+    private Integer isOffer;
 
     @NotNull
-    private int isPopular;
+    private Integer isPopular;
 
     @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ServiceActivities> activities;
