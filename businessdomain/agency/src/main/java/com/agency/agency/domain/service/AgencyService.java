@@ -42,8 +42,8 @@ public interface  AgencyService {
     String getServiceDescription(long id);
     String getServiceLocation(long id);
     Integer getServiceScore(long id);
-    Integer getServiceNewPrice(long id);
-    Integer getServicePrice(long id);
+    Float getServiceNewPrice(long id);
+    Float getServicePrice(long id);
     String getServiceCreationDate(long id);
     String getServicePhotos(long id);
     Integer getServiceIsOffer(long id);
