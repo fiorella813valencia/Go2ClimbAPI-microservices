@@ -3,29 +3,14 @@ package com.agency.agency.api;
 import com.agency.agency.domain.service.AgencyService;
 import com.agency.agency.mapping.AgencyMapper;
 import com.agency.agency.resource.AgencyResource;
-import com.agency.agency.resource.CreateAgencyResource;
-import com.agency.agency.resource.CreateAuthentication;
 import com.agency.agency.resource.UpdateAgencyResource;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.epoll.EpollChannelOption;
-import io.netty.handler.timeout.ReadTimeoutHandler;
-import io.netty.handler.timeout.WriteTimeoutHandler;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.reactive.function.client.WebClient;
 
-import reactor.netty.http.client.HttpClient;
-import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 
 @CrossOrigin("*")
@@ -63,14 +48,14 @@ public class AgencyController {
     }
 
     //funciona GET ALL
-    @GetMapping
+    @GetMapping("all")
     public List<AgencyResource> getAllAgencies()
     {
         return mapper.modelList(agencyService.getAll());
     }
 
     //funciona GET BY ID
-    @GetMapping("{agencyId}")
+    @GetMapping("id/{agencyId}")
     public AgencyResource getInfoAgencyById(@PathVariable Long agencyId) {
         return mapper.toResource(agencyService.getInfoAgencyById(agencyId));
     }
@@ -106,13 +91,13 @@ public class AgencyController {
 
 
     //funciona UPDATE
-    @PutMapping("/{agencyId}")
+    @PutMapping("update/{agencyId}")
     public AgencyResource updateAgency(@PathVariable Long agencyId, @RequestBody UpdateAgencyResource resource) {
         return mapper.toResource(agencyService.update(agencyId, mapper.toModel(resource)));
     }
 
     //funciona DELETE
-    @DeleteMapping("{agencyId}")
+    @DeleteMapping("delete{agencyId}")
     public ResponseEntity<?> deleteAgency(@PathVariable Long agencyId) {
         return agencyService.delete(agencyId);
     }

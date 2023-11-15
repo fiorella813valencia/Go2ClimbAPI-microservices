@@ -85,8 +85,8 @@ public class AgencyServiceIn implements AgencyService {
                 String serviceDescription=getServiceDescription(x.getServiceId());
                 String serviceLocation=getServiceLocation(x.getServiceId());
                 Integer serviceScore=getServiceScore(x.getServiceId());
-                Float serviceNewPrice= Float.valueOf(getServiceNewPrice(x.getServiceId()));
-                Float servicePrice= Float.valueOf(getServicePrice(x.getServiceId()));
+                Float serviceNewPrice= getServiceNewPrice(x.getServiceId());
+                Float servicePrice= getServicePrice(x.getServiceId());
                 String serviceCreationDate=getServiceCreationDate(x.getServiceId());
                 String servicePhotos=getServicePhotos(x.getServiceId());
                 Integer serviceIsOffer=getServiceIsOffer(x.getServiceId());
@@ -124,8 +124,8 @@ public class AgencyServiceIn implements AgencyService {
             String serviceDescription=getServiceDescription(x.getServiceId());
             String serviceLocation=getServiceLocation(x.getServiceId());
             Integer serviceScore=getServiceScore(x.getServiceId());
-            Float serviceNewPrice= Float.valueOf(getServiceNewPrice(x.getServiceId()));
-            Float servicePrice= Float.valueOf(getServicePrice(x.getServiceId()));
+            Float serviceNewPrice= getServiceNewPrice(x.getServiceId());
+            Float servicePrice= getServicePrice(x.getServiceId());
             String serviceCreationDate=getServiceCreationDate(x.getServiceId());
             String servicePhotos=getServicePhotos(x.getServiceId());
             Integer serviceIsOffer=getServiceIsOffer(x.getServiceId());

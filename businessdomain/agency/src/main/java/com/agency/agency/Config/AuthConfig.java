@@ -15,7 +15,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.stereotype.Component;
 
 @Configuration
 @EnableWebSecurity
@@ -35,9 +34,10 @@ public class AuthConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/auth/register", "/auth/token", "/auth/authenticate").permitAll()
+                .requestMatchers("/auth/register", "/auth/authenticate","/auth/token","/api/v1/agencies/all","/api/v1/agencies/location/*",
+                        "/api/v1/agencies/name/*","/api/v1/agencies/id/*").permitAll()
                 .and()
-                .authorizeHttpRequests().requestMatchers("/api/v1/agencies/**")
+                .authorizeHttpRequests().requestMatchers("api/v1/agencies/update/")
                 .authenticated().and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
