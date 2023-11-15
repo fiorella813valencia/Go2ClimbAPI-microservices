@@ -6,7 +6,6 @@ import com.agency.agency.resource.AgencyResource;
 import com.agency.agency.resource.UpdateAgencyResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
@@ -78,9 +77,9 @@ public class AgencyController {
     }
 
     // funciona GET BY LOCATION
-    @PreAuthorize("isAuthenticated()")
+
     @GetMapping("location/{agencyLocation}")
-    public AgencyResource getInfoAgencyByLocation(@PathVariable("agencyLocation") String agencyLocation,@RequestHeader("Authorization") String token) {
+    public AgencyResource getInfoAgencyByLocation(@PathVariable("agencyLocation") String agencyLocation) {
         System.out.println("HOLAA COMO ESTASSSSSSSSSSSSSSSSS");
         return mapper.toResource(agencyService.getByLocation(agencyLocation));
     }

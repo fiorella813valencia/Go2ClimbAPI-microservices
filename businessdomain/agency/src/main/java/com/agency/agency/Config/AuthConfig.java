@@ -37,7 +37,7 @@ public class AuthConfig {
                 .requestMatchers("/auth/register", "/auth/authenticate","/auth/token","/api/v1/agencies/all","/api/v1/agencies/location/*",
                         "/api/v1/agencies/name/*","/api/v1/agencies/id/*").permitAll()
                 .and()
-                .authorizeHttpRequests().requestMatchers("api/v1/agencies/update/")
+                .authorizeHttpRequests().requestMatchers("/api/v1/agencies/update/*","/api/v1/agencies/delete/*")
                 .authenticated().and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
