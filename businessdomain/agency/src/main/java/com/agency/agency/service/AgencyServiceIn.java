@@ -15,8 +15,11 @@ import io.netty.handler.timeout.WriteTimeoutHandler;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -47,6 +50,10 @@ public class AgencyServiceIn implements AgencyService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private JWTService jwtService;
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
+
+
 
 
     //webClient requires HttpClient library to work propertly
@@ -65,7 +72,10 @@ public class AgencyServiceIn implements AgencyService {
                 connection.addHandlerLast(new WriteTimeoutHandler(5000, TimeUnit.MILLISECONDS));
             });
 
-    public AgencyServiceIn(AgencyRepository agencyRepository, Validator validator, WebClient.Builder webClientBuilder) {
+    public AgencyServiceIn(AgencyRepository agencyRepository,
+                           Validator validator,
+                           WebClient.Builder webClientBuilder,
+                           StringRedisTemplate redisTemplate) {
         this.agencyRepository = agencyRepository;
         this.validator = validator;
         this.webClientBuilder = webClientBuilder;
@@ -324,193 +334,262 @@ public class AgencyServiceIn implements AgencyService {
 //    }
     //END JWT AUTHENTICATION
     @Override
+    @Cacheable(value = "serviceNameCache", key = "#id")
     public String getServiceName(long id) {
-        try{
-            WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                    .baseUrl("http://localhost:8081/api/v1/service/")
-                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
-                    .build();
-            JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
-                    .retrieve().bodyToMono(JsonNode.class).block();
-            String name = block.get("name").asText();
-            return name;
-        }catch (WebClientResponseException e) {
-            return null;
-        } catch (Exception ex) {
-            return null;
+        String cachedServiceName = (String) redisTemplate.opsForValue().get("serviceName:" + id);
+        if (cachedServiceName != null) {
+            return cachedServiceName;
+        } else {
+            try {
+                WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                        .baseUrl("http://localhost:8081/api/v1/service/")
+                        .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
+                        .build();
+                JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                        .retrieve().bodyToMono(JsonNode.class).block();
+                String name = block.get("name").asText();
+                redisTemplate.opsForValue().set("serviceName:" + id, name);
+                return name;
+            } catch (WebClientResponseException e) {
+                return null;
+            } catch (Exception ex) {
+                return null;
+            }
         }
     }
 
     @Override
+    @Cacheable(value = "serviceDescriptionCache", key = "#id")
     public String getServiceDescription(long id) {
-        try{
-            WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                    .baseUrl("http://localhost:8081/api/v1/service/")
-                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
-                    .build();
-            JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
-                    .retrieve().bodyToMono(JsonNode.class).block();
-            String description = block.get("description").asText();
-            return description;
-        }catch (WebClientResponseException e) {
-            return null;
-        } catch (Exception ex) {
-            return null;
+        String cachedServiceDescription=(String) redisTemplate.opsForValue().get("serviceDescription:"+id);
+        if(cachedServiceDescription!=null){
+            return cachedServiceDescription;
+        }else{
+            try{
+                WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                        .baseUrl("http://localhost:8081/api/v1/service/")
+                        .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
+                        .build();
+                JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                        .retrieve().bodyToMono(JsonNode.class).block();
+                String description = block.get("description").asText();
+                redisTemplate.opsForValue().set("serviceDescription:"+id,description);
+                return description;
+            }catch (WebClientResponseException e) {
+                return null;
+            } catch (Exception ex) {
+                return null;
+            }
         }
     }
 
     @Override
+    @Cacheable(value = "serviceLocationCache", key = "#id")
     public String getServiceLocation(long id) {
-        try{
-            WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                    .baseUrl("http://localhost:8081/api/v1/service/")
-                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
-                    .build();
-            JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
-                    .retrieve().bodyToMono(JsonNode.class).block();
-            String location = block.get("location").asText();
-            return location;
-        }catch (WebClientResponseException e) {
-            return null;
-        } catch (Exception ex) {
-            return null;
+        String cachedServiceLocation=(String) redisTemplate.opsForValue().get("serviceLocation:"+id);
+        if(cachedServiceLocation!=null){
+            return cachedServiceLocation;
+        }else{
+            try{
+                WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                        .baseUrl("http://localhost:8081/api/v1/service/")
+                        .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
+                        .build();
+                JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                        .retrieve().bodyToMono(JsonNode.class).block();
+                String location = block.get("location").asText();
+                redisTemplate.opsForValue().set("serviceLocation:"+id,location);
+                return location;
+            }catch (WebClientResponseException e) {
+                return null;
+            } catch (Exception ex) {
+                return null;
+            }
         }
     }
 
     @Override
+    @Cacheable(value = "serviceScoreCache", key = "#id")
     public Integer getServiceScore(long id) {
-        try{
-            WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                    .baseUrl("http://localhost:8081/api/v1/service/")
-                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
-                    .build();
-            JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
-                    .retrieve().bodyToMono(JsonNode.class).block();
-            Integer score = block.get("score").asInt();
-            return score;
-        }catch (WebClientResponseException e) {
-            return null;
-        } catch (Exception ex) {
-            return null;
+        Integer cachedServiceScore=(Integer) redisTemplate.opsForValue().get("serviceScore:"+id);
+        if (cachedServiceScore!=null){
+            return cachedServiceScore;
+        }else{
+            try{
+                WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                        .baseUrl("http://localhost:8081/api/v1/service/")
+                        .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
+                        .build();
+                JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                        .retrieve().bodyToMono(JsonNode.class).block();
+                Integer score = block.get("score").asInt();
+                redisTemplate.opsForValue().set("serviceScore:"+id,score);
+                return score;
+            }catch (WebClientResponseException e) {
+                return null;
+            } catch (Exception ex) {
+                return null;
+            }
         }
+
     }
 
     @Override
+    @Cacheable(value = "servicePriceCache", key = "#id")
     public Float getServicePrice(long id) {
-
-        try{
-            WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                    .baseUrl("http://localhost:8081/api/v1/service/")
-                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
-                    .build();
-            JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
-                    .retrieve().bodyToMono(JsonNode.class).block();
-            Float price = (float) block.get("price").asInt();
-            return price;
-        }catch (WebClientResponseException e) {
-            return null;
-        } catch (Exception ex) {
-            return null;
+        Float cacheServicePrice=(Float) redisTemplate.opsForValue().get("servicePrice:"+id);
+        if(cacheServicePrice!=null){
+            return cacheServicePrice;
+        }else{
+            try{
+                WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                        .baseUrl("http://localhost:8081/api/v1/service/")
+                        .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
+                        .build();
+                JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                        .retrieve().bodyToMono(JsonNode.class).block();
+                Float price = (float) block.get("price").asInt();
+                redisTemplate.opsForValue().set("servicePrice:"+id,price);
+                return price;
+            }catch (WebClientResponseException e) {
+                return null;
+            } catch (Exception ex) {
+                return null;
+            }
         }
     }
 
     @Override
+    @Cacheable(value = "serviceNewPriceCache", key = "#id")
     public Float getServiceNewPrice(long id) {
-
-        try{
-            WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                    .baseUrl("http://localhost:8081/api/v1/service/")
-                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
-                    .build();
-            JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
-                    .retrieve().bodyToMono(JsonNode.class).block();
-            Float newPrice = (float) block.get("newPrice").asInt();
-            return newPrice;
-        }catch (WebClientResponseException e) {
-            return null;
-        } catch (Exception ex) {
-            return null;
+        Float cachedServiceNewPrice=(Float) redisTemplate.opsForValue().get("serviceNewPrice:"+id);
+        if(cachedServiceNewPrice!=null){
+            return cachedServiceNewPrice;
+        }else{
+            try{
+                WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                        .baseUrl("http://localhost:8081/api/v1/service/")
+                        .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
+                        .build();
+                JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                        .retrieve().bodyToMono(JsonNode.class).block();
+                Float newPrice = (float) block.get("newPrice").asInt();
+                redisTemplate.opsForValue().set("serviceNewPrice:"+id,newPrice);
+                return newPrice;
+            }catch (WebClientResponseException e) {
+                return null;
+            } catch (Exception ex) {
+                return null;
+            }
         }
     }
 
     @Override
+    @Cacheable(value = "serviceCreationDateCache", key = "#id")
     public String getServiceCreationDate(long id) {
-        try{
-            WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                    .baseUrl("http://localhost:8081/api/v1/service/")
-                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
-                    .build();
-            JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
-                    .retrieve().bodyToMono(JsonNode.class).block();
-            String creationDate = block.get("creationDate").asText();
-            return creationDate;
-        }catch (WebClientResponseException e) {
-            return null;
-        } catch (Exception ex) {
-            return null;
+        String cachedServiceCreationDate=(String) redisTemplate.opsForValue().get("serviceCreationDate:"+id);
+        if(cachedServiceCreationDate!=null){
+            return cachedServiceCreationDate;
+        }else{
+            try{
+                WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                        .baseUrl("http://localhost:8081/api/v1/service/")
+                        .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
+                        .build();
+                JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                        .retrieve().bodyToMono(JsonNode.class).block();
+                String creationDate = block.get("creationDate").asText();
+                redisTemplate.opsForValue().set("serviceCreationDate:"+id,creationDate);
+                return creationDate;
+            }catch (WebClientResponseException e) {
+                return null;
+            } catch (Exception ex) {
+                return null;
+            }
         }
     }
     @Override
+    @Cacheable(value = "servicePhotosCache", key = "#id")
     public String getServicePhotos(long id) {
-        try{
-            WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                    .baseUrl("http://localhost:8081/api/v1/service/")
-                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
-                    .build();
-            JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
-                    .retrieve().bodyToMono(JsonNode.class).block();
-            String photos = block.get("photos").asText();
-            return photos;
-        }catch (WebClientResponseException e) {
-            return null;
-        } catch (Exception ex) {
-            return null;
+        String cachedServicePhotos=(String) redisTemplate.opsForValue().get("servicePhoto:"+id);
+        if(cachedServicePhotos!=null){
+            return cachedServicePhotos;
+        }else{
+            try{
+                WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                        .baseUrl("http://localhost:8081/api/v1/service/")
+                        .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
+                        .build();
+                JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                        .retrieve().bodyToMono(JsonNode.class).block();
+                String photos = block.get("photos").asText();
+                redisTemplate.opsForValue().set("servicePhoto:"+id,photos);
+                return photos;
+            }catch (WebClientResponseException e) {
+                return null;
+            } catch (Exception ex) {
+                return null;
+            }
         }
     }
 
     @Override
+    @Cacheable(value = "serviceIsOfferCache", key = "#id")
     public Integer getServiceIsOffer(long id) {
-        try{
-            WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                    .baseUrl("http://localhost:8081/api/v1/service/")
-                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
-                    .build();
-            JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
-                    .retrieve().bodyToMono(JsonNode.class).block();
-            Integer isOffer = block.get("isOffer").asInt();
-            return isOffer;
-        }catch (WebClientResponseException e) {
-            return null;
-        } catch (Exception ex) {
-            return null;
+        Integer cachedServiceOffer=(Integer) redisTemplate.opsForValue().get("serviceOffer:"+id);
+        if(cachedServiceOffer!=null){
+            return cachedServiceOffer;
+        }else{
+            try{
+                WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                        .baseUrl("http://localhost:8081/api/v1/service/")
+                        .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
+                        .build();
+                JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                        .retrieve().bodyToMono(JsonNode.class).block();
+                Integer isOffer = block.get("isOffer").asInt();
+                redisTemplate.opsForValue().set("serviceOffer:"+id,isOffer);
+                return isOffer;
+            }catch (WebClientResponseException e) {
+                return null;
+            } catch (Exception ex) {
+                return null;
+            }
         }
     }
 
     @Override
+    @Cacheable(value = "serviceIsPopularCache", key = "#id")
     public Integer getServiceIsPopular(long id) {
-        try {
-            WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
-                    .baseUrl("http://localhost:8081/api/v1/service/")
-                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                    .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
-                    .build();
-            JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
-                    .retrieve().bodyToMono(JsonNode.class).block();
-            Integer isPopular = block.get("isPopular").asInt();
-            return isPopular;
-        }catch (WebClientResponseException e) {
-            return null;
-        } catch (Exception ex) {
-            return null;
+        Integer cachedServicePopular=(Integer) redisTemplate.opsForValue().get("servicePopular:"+id);
+        if(cachedServicePopular!=null){
+            return cachedServicePopular;
+        }else{
+            try {
+                WebClient build = webClientBuilder.clientConnector(new ReactorClientHttpConnector(client))
+                        .baseUrl("http://localhost:8081/api/v1/service/")
+                        .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .defaultUriVariables(Collections.singletonMap("url", "http://localhost:8081/api/v1/service/"))
+                        .build();
+                JsonNode block = build.method(HttpMethod.GET).uri("/" + id)
+                        .retrieve().bodyToMono(JsonNode.class).block();
+                Integer isPopular = block.get("isPopular").asInt();
+                redisTemplate.opsForValue().set("servicePopular:"+id,isPopular);
+                return isPopular;
+            }catch (WebClientResponseException e) {
+                return null;
+            } catch (Exception ex) {
+                return null;
+            }
         }
     }
 }
